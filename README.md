@@ -9,7 +9,7 @@ Följ dessa steg för att köra projektet lokalt:
 
 ### 1. Klona repository
 ```bash
-git clone <din-repo-url>
+git clone <repo-url>
 cd blug-forum
 ````
 
