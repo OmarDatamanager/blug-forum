@@ -91,7 +91,9 @@ blug-forum/
 Anslut till PostgreSQL och skapa en ny databas:
 
 
+```sql
 CREATE DATABASE blug_forum;
+```
 
 De centrala tabellerna är definierade för användare, forum, trådar, meddelanden och behörigheter (moderatorer och medlemmar i privata trådar).
 
@@ -109,13 +111,13 @@ En test-endpoint finns för att verifiera att servern körs korrekt:
 * **Route:** `GET /api/health`
 * **Respons-exempel:**
 
-
+```json
 {
   "status": "OK",
   "message": "Blug Forum API is running",
   "timestamp": "2025-09-30T09:39:52.480Z"
 }
-
+```
 
 Testad i **Postman** och fungerar som förväntat 
 
