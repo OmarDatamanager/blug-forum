@@ -92,6 +92,7 @@ Anslut till PostgreSQL och skapa en ny databas:
 
 ```sql
 CREATE DATABASE blug_forum;
+```
 
 De centrala tabellerna är definierade för användare, forum, trådar, meddelanden och behörigheter (moderatorer och medlemmar i privata trådar).
 
@@ -136,6 +137,58 @@ npm run dev
 ```
 
 ---
+
+##  Autentisering (Register & Login)
+
+Ett enkelt autentiseringssystem har implementerats.
+
+###  Struktur
+- `src/models/userModel.js` – hanterar databasfrågor för användare (skapa, hitta via e-post, hitta via ID).
+- `src/controllers/authController.js` – logik för registrering och inloggning (bcrypt-hashning + JWT).
+- `src/routes/authRoutes.js` – definierar API-endpoints för autentisering.
+- `src/app.js` – kopplar in auth-routes under `/api/auth`.
+
+###  Funktionalitet
+- **Registrering (`POST /api/auth/register`)**
+  - Skapar ny användare med hashat lösenord
+  - Returnerar användardata (utan lösenord)
+- **Inloggning (`POST /api/auth/login`)**
+  - Verifierar e-post och lösenord
+  - Returnerar JWT-token + användarinfo
+
+
+Exempelrespons (login):
+
+```json
+{
+  "message": "Login successful",
+  "token": "<JWT_TOKEN>",
+  "user": {
+    "id": 1,
+    "username": "testuser",
+    "email": "test@example.com",
+    "role": "member"
+  }
+}
+```
+
+###  Databas
+
+* Lösenord lagras hashade med **bcryptjs**
+* Token genereras med **jsonwebtoken**
+* Data sparas i tabellen `users`
+
+```sql
+SELECT * FROM users;
+---
+
+###  Exempel på `users`-tabell
+
+| id | username | email           | password                       | role   | created_at           |
+|----|----------|-----------------|--------------------------------|--------|----------------------|
+| 1  | testuser | test@example.com| $2b$10$xbNJ80h4iCAURmIbESWe0O...| member | 2025-09-30 17:20:43 
+
+
 
 
 
