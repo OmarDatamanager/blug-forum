@@ -9,7 +9,7 @@ Följ dessa steg för att köra projektet lokalt:
 
 ### 1. Klona repository
 ```bash
-git clone <din-repo-url>
+git clone <https://github.com/OmarDatamanager/blug-forum>
 cd blug-forum
 ````
 
@@ -180,7 +180,7 @@ Exempelrespons (login):
 
 ```sql
 SELECT * FROM users;
----
+```
 
 ###  Exempel på `users`-tabell
 
