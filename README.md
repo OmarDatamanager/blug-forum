@@ -236,3 +236,92 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 ```
 ---
+
+## Forum-API
+
+Ett nytt forum-system har implementerats som gör det möjligt att skapa, hämta och visa forum. Systemet använder autentisering (JWT) för skyddade endpoints.
+
+### Funktionalitet
+
+* **Skapa forum (skyddad)**
+  Endast inloggade användare kan skapa nya forum.
+* **Hämta alla forum (öppen)**
+  Hämtar en lista över alla tillgängliga forum.
+* **Hämta forum via ID (öppen)**
+  Returnerar detaljer om ett specifikt forum.
+
+### Endpoints
+
+#### Skapa forum
+
+**POST** `/api/forums`
+
+* **Headers:**
+  `Authorization: Bearer <JWT_TOKEN>`
+* **Body:**
+
+```json
+{
+  "name": "Programming",
+  "description": "Discussion about programming languages"
+}
+```
+
+* **Exempel på svar:**
+
+```json
+{
+  "message": "Forum created successfully",
+  "forum": {
+    "id": 1,
+    "name": "Programming",
+    "description": "Discussion about programming languages",
+    "slug": "programming",
+    "created_by": 1,
+    "created_at": "2025-10-01T20:44:02.400Z"
+  }
+}
+```
+
+#### Hämta alla forum
+
+**GET** `/api/forums`
+
+* **Exempel på svar:**
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Programming",
+    "description": "Discussion about programming languages",
+    "slug": "programming",
+    "created_by": 1,
+    "created_at": "2025-10-01T20:44:02.400Z",
+    "creator_name": "testuser"
+  }
+]
+```
+
+#### Hämta forum via ID
+
+**GET** `/api/forums/by-id/:id`
+
+* **Exempel:**
+  `GET http://localhost:3000/api/forums/by-id/1`
+
+* **Exempel på svar:**
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Programming",
+    "description": "Discussion about programming languages",
+    "slug": "programming",
+    "created_by": 1,
+    "created_at": "2025-10-01T20:44:02.400Z"
+  }
+]
+```
+---
