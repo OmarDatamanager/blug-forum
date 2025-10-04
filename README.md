@@ -499,3 +499,122 @@ Svar:
 * **PATCH /api/threads/:forum/:thread** → Ändra trådägare *(kräver token)*
 
 ---
+
+#  Meddelandesystem (Messages)
+
+Denna modul lägger till stöd för **meddelanden i trådar**. Användare kan skapa, läsa, uppdatera och ta bort sina egna meddelanden i en tråd. Endast ägaren av ett meddelande kan ändra eller ta bort det.
+
+## Endpoints
+
+###  Skapa nytt meddelande
+
+**POST** `/api/:forum/:thread`
+Kräver **Bearer-token**
+
+**Body-exempel:**
+
+```json
+{
+  "text": "This is a test message in the thread"
+}
+```
+
+**Svar:**
+
+```json
+{
+  "message": {
+    "id": 1,
+    "content": "This is a test message in the thread",
+    "thread_id": 1,
+    "user_id": 1,
+    "created_at": "2025-10-04T17:29:07.835Z"
+  }
+}
+```
+
+
+###  Lista alla meddelanden i en tråd
+
+**GET** `/api/:forum/:thread/messages`
+
+**Svar:**
+
+```json
+[
+  {
+    "id": 1,
+    "content": "This is a test message in the thread",
+    "thread_id": 1,
+    "user_id": 1,
+    "created_at": "2025-10-04T17:29:07.835Z",
+    "username": "testuser"
+  }
+]
+```
+
+
+###  Hämta ett enskilt meddelande
+
+**GET** `/api/:forum/:thread/:id`
+
+**Svar:**
+
+```json
+{
+  "id": 1,
+  "content": "This is a test message in the thread",
+  "thread_id": 1,
+  "user_id": 1,
+  "created_at": "2025-10-04T17:29:07.835Z"
+}
+```
+
+
+###  Uppdatera ett meddelande
+
+**PATCH** `/api/:forum/:thread/:id`
+Kräver **Bearer-token** och att användaren äger meddelandet.
+
+**Body-exempel:**
+
+```json
+{
+  "text": "This is an edited message"
+}
+```
+
+**Svar:**
+
+```json
+{
+  "message": "Message updated successfully",
+  "message": {
+    "id": 1,
+    "content": "This is an edited message",
+    "thread_id": 1,
+    "user_id": 1,
+    "created_at": "2025-10-04T17:29:07.835Z"
+  }
+}
+```
+
+
+###  Ta bort ett meddelande
+
+**DELETE** `/api/:forum/:thread/:id`
+Kräver **Bearer-token** och att användaren äger meddelandet.
+
+**Svar:**
+
+```json
+{
+  "message": "Message deleted successfully"
+}
+```
+
+
+ Med detta system kan användare nu interagera direkt i trådar genom att skriva meddelanden, redigera dem eller ta bort dem vid behov. Systemet säkerställer att endast **ägaren av ett meddelande** har rättigheter att ändra eller ta bort det.
+
+---
+
