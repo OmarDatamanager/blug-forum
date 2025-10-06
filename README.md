@@ -83,4 +83,61 @@ blug-forum/
 * [helmet](https://www.npmjs.com/package/helmet) - Säkerhetsheaders
 * [nodemon](https://www.npmjs.com/package/nodemon) - För utveckling
 
+---
+
+##  Databas & Server
+
+### 1. Skapa databasen
+Anslut till PostgreSQL och skapa en ny databas:
+
+
+```sql
+CREATE DATABASE blug_forum;
+```
+
+De centrala tabellerna är definierade för användare, forum, trådar, meddelanden och behörigheter (moderatorer och medlemmar i privata trådar).
+
+ Databasanslutningen hanteras via `src/config/database.js` med hjälp av `pg` och miljövariabler i `.env`.
+
+### 2. Server & applikation
+
+* **Express** är konfigurerad i `src/app.js` med `helmet`, `cors` och `express.json()` för säkerhet och JSON-hantering.
+* **Servern** startas från `src/server.js` och läser in miljövariablerna från `.env`.
+
+### 3. Hälsokontroll
+
+En test-endpoint finns för att verifiera att servern körs korrekt:
+
+* **Route:** `GET /api/health`
+* **Respons-exempel:**
+
+```json
+{
+  "status": "OK",
+  "message": "Blug Forum API is running",
+  "timestamp": "2025-09-30T09:39:52.480Z"
+}
+```
+
+Testad i **Postman** och fungerar som förväntat 
+
+---
+
+##  Kom igång
+
+### Installation
+
+```bash
+npm install
+```
+
+### Starta i utvecklingsläge
+
+```bash
+npm run dev
+```
+
+---
+
+
 
