@@ -326,3 +326,177 @@ Ett nytt forum-system har implementerats som gör det möjligt att skapa, hämta
 ]
 ```
 ---
+
+#  Threads API
+
+Beskrivning av den nya **Threads-funktionaliteten** som utökar forumsystemet.
+En tråd (Thread) är ett diskussionsämne inom ett forum och kan vara publik eller privat.
+Endast autentiserade användare kan skapa trådar eller ändra ägarskap, medan läsning är öppen för alla.
+
+
+##  Autentisering
+
+* **Publika endpoints** kräver ingen autentisering.
+* **Skyddade endpoints** kräver en giltig **JWT-token** i headern:
+
+```
+Authorization: Bearer <TOKEN>
+```
+
+
+##  Endpoints
+
+### 1. Skapa en ny tråd *(skyddad)*
+
+**POST** `/api/threads/:forum`
+Skapar en ny tråd i ett specifikt forum.
+
+**URL-parametrar**:
+
+* `:forum` → Forumets ID.
+
+**Request Body**:
+
+```json
+{
+  "title": "Help with Node.js",
+  "is_public": true
+}
+```
+
+**Svar**:
+
+```json
+{
+  "message": "Thread created successfully",
+  "thread": {
+    "id": 1,
+    "title": "Help with Node.js",
+    "forum_id": 1,
+    "created_by": 1,
+    "is_public": true,
+    "created_at": "2025-10-02T15:55:29.994Z"
+  }
+}
+```
+
+
+### 2. Hämta alla trådar i ett forum *(publik)*
+
+**GET** `/api/threads/:forum`
+Returnerar en lista med alla trådar för ett specifikt forum.
+
+**URL-parametrar**:
+
+* `:forum` → Forumets ID.
+
+**Svar**:
+
+```json
+[
+  {
+    "id": 1,
+    "title": "Help with Node.js",
+    "forum_id": 1,
+    "created_by": 1,
+    "is_public": true,
+    "created_at": "2025-10-02T15:55:29.994Z",
+    "creator_name": "testuser"
+  }
+]
+```
+
+
+### 3. Hämta en specifik tråd *(publik)*
+
+**GET** `/api/threads/:forum/:thread`
+Hämtar detaljer om en enskild tråd.
+
+**URL-parametrar**:
+
+* `:forum` → Forumets ID.
+* `:thread` → Trådens ID.
+
+**Svarsexempel**:
+
+```json
+{
+  "id": 1,
+  "title": "Help with Node.js",
+  "forum_id": 1,
+  "created_by": 1,
+  "is_public": true,
+  "created_at": "2025-10-02T15:55:29.994Z",
+  "creator_name": "testuser"
+}
+```
+
+
+### 4. Uppdatera trådägare *(skyddad)*
+
+**PATCH** `/api/threads/:forum/:thread`
+Överför ägarskapet av en tråd till en annan användare. Endast den nuvarande ägaren kan göra detta.
+
+**URL-parametrar**:
+
+* `:forum` → Forumets ID.
+* `:thread` → Trådens ID.
+
+**Request Body**:
+
+```json
+{
+  "changeCreator": 2
+}
+```
+
+**Svar**:
+
+```json
+{
+  "message": "Thread ownership transferred successfully",
+  "thread": {
+    "id": 1,
+    "title": "Help with Node.js",
+    "forum_id": 1,
+    "created_by": 2,
+    "is_public": true,
+    "created_at": "2025-10-02T15:55:29.994Z"
+  }
+}
+```
+
+
+### Åtkomstkontroll vid ägarbyte
+
+Endast den nuvarande trådägaren får ändra ägarskapet.  
+Om en annan användare försöker genomföra begäran returneras ett **403 Forbidden**-fel.
+
+**Exempel:**
+
+Begäran:
+```http
+PATCH http://localhost:3000/api/threads/1/1
+Headers: Authorization: Bearer TOKEN_FÖR_ANNAN_ANVÄNDARE
+Body:
+{
+  "changeCreator": 2
+}
+````
+
+Svar:
+
+```json
+{
+  "error": "Only thread owner can transfer ownership"
+}
+```
+
+##  Sammanfattning
+
+* **POST /api/threads/:forum** → Skapa ny tråd *(kräver token)*
+* **GET /api/threads/:forum** → Lista trådar i forum *(öppen)*
+* **GET /api/threads/:forum/:thread** → Hämta en tråd *(öppen)*
+* **PATCH /api/threads/:forum/:thread** → Ändra trådägare *(kräver token)*
+
+---
