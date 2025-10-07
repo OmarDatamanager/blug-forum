@@ -619,3 +619,146 @@ Kräver **Bearer-token** och att användaren äger meddelandet.
 
 ---
 
+#  Moderator- och medlems­hantering för trådar
+
+Detta tillägg gör det möjligt att hantera **moderatorer** och **medlemmar** för privata trådar.
+Trådägaren kan utse moderatorer, och både ägare och moderatorer kan bjuda in eller ta bort medlemmar från en tråd.
+
+
+##  Förutsättningar
+
+* Du måste vara **inloggad** och använda en giltig **JWT Bearer Token** i alla anrop.
+* Endast **trådägaren** kan:
+
+  * Lägga till / ta bort moderatorer.
+* **Trådägaren och moderatorer** kan:
+
+  * Bjuda in / ta bort medlemmar från en tråd.
+
+
+##  API-ändpunkter (Moderators)
+
+### 1. Lägg till moderator
+
+```http
+POST http://localhost:3000/api/threads/:thread/moderators
+Headers: Authorization: Bearer YOUR_TOKEN
+Body:
+{
+  "user_id": 2
+}
+```
+
+ **Svar:**
+
+```json
+{
+  "message": "Moderator added successfully"
+}
+```
+
+
+### 2. Ta bort moderator
+
+```http
+DELETE http://localhost:3000/api/threads/:thread/moderators
+Headers: Authorization: Bearer YOUR_TOKEN
+Body:
+{
+  "user_id": 2
+}
+```
+
+ **Svar:**
+
+```json
+{
+  "message": "Moderator removed successfully"
+}
+```
+
+
+##  API-ändpunkter (Medlemmar i privata trådar)
+
+### 3. Bjud in användare till tråd
+
+```http
+POST http://localhost:3000/api/threads/:thread/invite
+Headers: Authorization: Bearer YOUR_TOKEN
+Body:
+{
+  "user_id": 3
+}
+```
+
+ **Svar:**
+
+```json
+{
+  "message": "User invited to thread successfully"
+}
+```
+
+
+### 4. Ta bort användare från tråd
+
+```http
+DELETE http://localhost:3000/api/threads/:thread/members
+Headers: Authorization: Bearer YOUR_TOKEN
+Body:
+{
+  "user_id": 3
+}
+```
+
+ **Svar:**
+
+```json
+{
+  "message": "User removed from thread successfully"
+}
+```
+
+
+##  Exempel (steg för steg i Postman)
+
+1. **Registrera en ny användare**
+
+   ```http
+   POST http://localhost:3000/api/auth/register
+   Body:
+   {
+     "username": "user2",
+     "email": "user2@example.com",
+     "password": "password123"
+   }
+   ```
+
+   **Svar:**
+
+   ```json
+   {
+     "message": "User created successfully",
+     "user": {
+       "id": 2,
+       "username": "user2",
+       "email": "user2@example.com",
+       "role": "member",
+       "created_at": "2025-10-06T09:09:45.971Z"
+     }
+   }
+   ```
+
+2. **Logga in** → hämta `token`.
+
+3. **Lägg till användaren som moderator i en tråd** med endpointen ovan.
+
+4. **Bjud in ytterligare medlemmar** eller **ta bort dem** efter behov.
+
+
+##  Sammanfattning
+
+* **Ägare** kontrollerar moderatorer.
+* **Ägare + moderatorer** kontrollerar trådens medlemmar.
+* Säkerhet tillämpas med JWT-token i varje begäran.
+* Systemet ger en tydlig rollfördelning mellan **ägare → moderatorer → medlemmar**.
