@@ -189,7 +189,51 @@ SELECT * FROM users;
 |----|----------|-----------------|--------------------------------|--------|----------------------|
 | 1  | testuser | test@example.com| $2b$10$xbNJ80h4iCAURmIbESWe0O...| member | 2025-09-30 17:20:43 
 
+---
 
+## Autentisering Middleware & Skyddade Användarrutter
 
+### Middleware (`src/middleware/auth.js`)
 
+* **verifyToken**: Validerar JWT från `Authorization: Bearer <token>` headern. Returnerar `401` om ingen token skickas eller `400` om token är ogiltig.
+* **requireAdmin**: Säkerställer att användaren har rollen `admin`, annars returneras `403`.
 
+### Användarrutter (`src/routes/userRoutes.js`)
+
+Skyddade rutter som kräver giltig JWT.
+
+* **GET** `/api/users`
+  Hämtar alla användare (utan lösenord).
+
+  **Exempelrequest (Postman):**
+
+  ```
+  GET http://localhost:3000/api/users
+  Headers:
+  Authorization: Bearer <JWT_token>
+  ```
+
+  **Exempelrespons:**
+
+  ```json
+  [
+    {
+      "id": 1,
+      "username": "testuser",
+      "email": "test@example.com",
+      "role": "member",
+      "created_at": "2025-09-30T15:20:43.319Z"
+    }
+  ]
+  ```
+
+* **GET** `/api/users/:id`
+  Hämtar en specifik användare baserat på ID. Returnerar `404` om ingen användare hittas.
+
+### App-integration (`src/app.js`)
+
+```javascript
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
+```
+---
