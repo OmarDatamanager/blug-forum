@@ -9,6 +9,8 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+app.use('/api/auth', require('./routes/authRoutes'));
+
 // Test route
 app.get('/api/health', (req, res) => {
   res.json({
