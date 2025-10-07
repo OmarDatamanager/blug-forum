@@ -13,6 +13,8 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/forums', require('./routes/forumRoutes'));
 app.use('/api/threads', require('./routes/threadRoutes'));
+app.use('/api', require('./routes/messageRoutes'));
+
 
 
 // Test route
