@@ -762,3 +762,137 @@ Body:
 * **Ägare + moderatorer** kontrollerar trådens medlemmar.
 * Säkerhet tillämpas med JWT-token i varje begäran.
 * Systemet ger en tydlig rollfördelning mellan **ägare → moderatorer → medlemmar**.
+
+---
+
+# Blug Forum - Säkerhetsdokumentation
+
+##  Implementerade Säkerhetsfunktioner
+
+### Autentisering och Auktorisering
+- **JWT-baserad autentisering** - Säker token-baserad inloggning
+- **Bcrypt lösenordskryptering** - Lösenord hashas med saltning
+- **Rollbaserad åtkomstkontroll** - Användare, moderators, administratörer
+
+**Exempel på JWT implementation:**
+```javascript
+// Login controller
+const token = jwt.sign(
+  { userId: user.id, role: user.role },
+  process.env.JWT_SECRET,
+  { expiresIn: '24h' }
+);
+```
+
+### Rate Limiting Skydd
+```javascript
+// Inloggning: max 5 försök per 15 minuter
+// Allmänna requests: max 100 requests per 15 minuter
+```
+- **Skydd mot:** Brute force-attacker och DoS
+
+**Exempel på rate limiting:**
+```javascript
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: { error: 'Too many login attempts' }
+});
+```
+
+### Input Validation
+- **Användarregistrering** - Validering av e-post och lösenord
+- **Trådskapande** - Titelvalidering och längdkontroll
+
+**Exempel på validering:**
+```javascript
+const validateUserRegistration = (req, res, next) => {
+  if (password.length < 6) {
+    return res.status(400).json({ error: 'Password must be at least 6 characters' });
+  }
+  next();
+};
+```
+
+### Åtkomstkontrollsystem
+
+#### Hierarki av Rättigheter
+1. **Oinloggade användare** - Läsa publika trådar
+2. **Registrerade användare** - Skapa inlägg och trådar
+3. **Trådägare** - Hantera trådinställningar och moderators
+4. **Moderators** - Moderera innehåll i tråd
+5. **Administratörer** - Full systemaccess
+
+**Exempel på åtkomstkontroll:**
+```javascript
+// Middleware för trådägare
+if (threadInfo.created_by !== req.user.userId) {
+  return res.status(403).json({ error: 'Access denied. Thread owner only.' });
+}
+```
+
+### Dataskydd
+- **Lösenord:** Lagras hashad med bcrypt
+- **Känslig data:** Skyddad via environment variables
+- **Användarrättigheter:** Möjlighet att radera eget konto
+
+**Exempel på lösenordskryptering:**
+```javascript
+const hashedPassword = await bcrypt.hash(password, 10);
+const validPassword = await bcrypt.compare(password, user.password);
+```
+
+### SQL Injection Skydd
+- **Prepared statements** via pg biblioteket
+- **Parameteriserade queries** i alla databasanrop
+
+**Exempel på säkra databasanrop:**
+```javascript
+const query = 'SELECT * FROM users WHERE email = $1';
+const result = await pool.query(query, [email]);
+```
+
+### Säkerhetsheaders med Helmet.js
+```javascript
+app.use(helmet());
+// Automatisk konfiguration av säkerhetsheaders
+```
+
+### Felhantering
+- **Generiska felmeddelanden** - Undviker information läckage
+- **Strukturerade felresponser** - Konsekvent API-respons
+
+**Exempel på säker felhantering:**
+```javascript
+try {
+  // Kod här
+} catch (error) {
+  console.error('Error:', error);
+  res.status(500).json({ error: 'Server error' });
+}
+```
+
+##  Testa Säkerhetsfunktioner
+
+### Rate Limiting Test
+```bash
+# Testa med flera inloggningsförsök
+POST /api/auth/login (6 gånger på 15 minuter)
+```
+
+### Åtkomstkontroll Test
+```bash
+# Testa att komma åt skyddade routes utan token
+GET /api/users (utan Authorization header)
+```
+
+### Validering Test
+```bash
+# Testa ogiltig registrering
+POST /api/auth/register
+{
+  "username": "a",
+  "email": "invalid-email",
+  "password": "123"
+}
+```

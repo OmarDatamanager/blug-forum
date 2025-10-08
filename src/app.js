@@ -1,11 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const { generalLimiter } = require('./middleware/rateLimit');
+
 
 const app = express();
 
 // Middleware
 app.use(helmet());
+app.use(generalLimiter);
 app.use(cors());
 app.use(express.json());
 
