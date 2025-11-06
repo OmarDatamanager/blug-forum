@@ -896,3 +896,58 @@ POST /api/auth/register
   "password": "123"
 }
 ```
+
+---
+
+
+##  Startsida Gränssnitt
+
+Applikationen har nu en enkel startsida tillgänglig på `http://localhost:3000/` som fungerar som:
+
+###  Funktioner:
+- **Realtid serverstatus** övervakning
+- **Komplett API endpoints** dokumentation
+- **Klickbara tester** för vanliga endpoints
+- **En enkel responsivt design**
+- **Postman integrationsguide**
+
+###  Teknisk Information:
+- **Inbäddad HTML/CSS** inom Express.js
+- **Mobil-responsive** design
+- **Inga externa beroenden**
+- **Omedelbar API-dokumentation**
+
+###  Användning:
+Besök `http://localhost:3000/` efter att ha startat servern med `npm run dev` för att:
+- Verifiera serverstatus 
+- Se alla några endpoints 
+- Testa API-funktionalitet 
+- Få Postman installationsinstruktioner 
+
+###  Filläge:
+- **Implementation:** `src/app.js`
+- **Route:** `app.get('/', (req, res) => { ... })`
+- **Typ:** Inbäddad HTML med inline CSS
+
+###  Snabbstart:
+```bash
+npm run dev
+```
+Öppna sedan webbläsaren och gå till: `http://localhost:3000/`
+
+###  API Endpoints Visas:
+- `/api/health` - Server hälsokontroll
+- `/api/auth/login` - Användarinloggning
+- `/api/forums` - Forums hantering
+- `/api/threads` - Trådar hantering
+- `/api/messages` - Meddelanden hantering
+```
+
+---
+
+
+**Postman Collection**: [docs/postman/blug-forum-collection.json](docs/postman/blug-forum-collection.json)
+Importera denna fil till Postman för att testa alla API-endpoints
+
+
+
