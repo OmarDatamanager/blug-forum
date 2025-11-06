@@ -945,8 +945,8 @@ npm run dev
 ---
 
 
-- **Postman Collection**: [docs/postman/blug-forum-collection.json](docs/postman/blug-forum-collection.json)
-- Importera denna fil till Postman för att testa alla API-endpoints
+**Postman Collection**: [docs/postman/blug-forum-collection.json](docs/postman/blug-forum-collection.json)
+Importera denna fil till Postman för att testa alla API-endpoints
 
 
 
